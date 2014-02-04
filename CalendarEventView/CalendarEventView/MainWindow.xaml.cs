@@ -33,6 +33,7 @@ namespace CalendarEventView
             DataContext = App.ViewModel;
             App.ViewModel.Log();
             Timers();
+            MessageBox.Show(DateTime.Now.Hour.ToString());
         }
 
         private void Timers()
@@ -67,7 +68,6 @@ namespace CalendarEventView
 
         private void ConnectedApp_Click(object sender, RoutedEventArgs e)
         {
-            //App.ViewModel.Connected = !App.ViewModel.Connected;
             App.ViewModel.Log();
         }
 
@@ -93,8 +93,24 @@ namespace CalendarEventView
 
             Year.Text = dt.Year.ToString();
             Month.Text = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(dt.Month);
+            if (!string.IsNullOrEmpty(Day.Text) && Day.Text!=dt.Day.ToString())
+            {
+                App.ViewModel.GetAllEvent();
+            }
             Day.Text = dt.Day.ToString();
             DayName.Text = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedDayName(dt.DayOfWeek);
+            if (App.ViewModel.TimeToEvent!="N/A")
+            {
+                if (!string.IsNullOrEmpty(App.ViewModel.TimeToEvent))
+                {
+                    int time = Convert.ToInt32(App.ViewModel.TimeToEvent) - 1;
+                    App.ViewModel.TimeToEvent = time.ToString();
+                    if (Convert.ToInt32(App.ViewModel.TimeToEvent) <= 0)
+                    {
+                        App.ViewModel.GetAllEvent();
+                    }
+                }
+            }
         }
     }
 }

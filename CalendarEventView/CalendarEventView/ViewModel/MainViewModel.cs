@@ -141,6 +141,16 @@ namespace CalendarEventView.ViewModel
         public Weather Weather { get; set; }
         public string LocationCode { get; set; }
         public string CalendarID { get; set; }
+        /// <summary>
+        /// /
+        /// </summary>
+        public int image { get; set; }
+        public string simage { get; set; }
+        public string skycode { get; set; }
+        public string str { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
 
         public UserCredential credential { get; set; }
         IList<Google.Apis.Calendar.v3.Data.CalendarListEntry> calendarlist { get; set; }
@@ -315,12 +325,12 @@ namespace CalendarEventView.ViewModel
         {
             string url = string.Format(@"http://weather.service.msn.com/data.aspx?culture=en-US&wealocations={0}&weadegreetype=C", LocationCode);
             HttpWebRequest request2 = WebRequest.CreateHttp(url);
-            WebResponse responseAsync = await request2.GetResponseAsync();
+            WebResponse responseAsync = request2.GetResponse();
             WebResponse webResponse = responseAsync;
             Stream responseStream = webResponse.GetResponseStream();
             StreamReader streamReader = new StreamReader(responseStream);
-            string endAsync = await streamReader.ReadToEndAsync();
-            string str = endAsync;
+            string endAsync = streamReader.ReadToEnd();
+            str = endAsync;
 
             XDocument doc = XDocument.Parse(str);
             foreach (XElement element in doc.Descendants("weather"))
@@ -335,11 +345,12 @@ namespace CalendarEventView.ViewModel
                 Temparature = Weather.Temperature.CurrentValue;
                 Weather.Temperature.FeelsLike = element.Attribute("feelslike").Value + "*C";
                 Weather.Temperature.SkyCode = element.Attribute("skycode").Value;
+                skycode = element.Attribute("skycode").Value;
                 Weather.Temperature.SkyText = element.Attribute("skytext").Value;
                 Weather.Temperature.Wind = element.Attribute("winddisplay").Value;
             }
-            int image = await GetWeatherIcon();
-            string simage = image.ToString();
+            image = await GetWeatherIcon();
+            simage = image.ToString();
             if (simage.Length==1)
 	        {
 		        simage = "0" + simage;
@@ -353,8 +364,8 @@ namespace CalendarEventView.ViewModel
 
         private async Task<int> GetWeatherIcon()
         {
-            int sunset = 4;
-            int sunrise = 22;
+            int sunset = 19;
+            int sunrise = 6;
             switch (Convert.ToInt32(Weather.Temperature.SkyCode))
             {
                 case 26:
